@@ -448,11 +448,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -5861409178561632961, guid: 1c3f81f1f49bc744893c2d83d5979efb, type: 3}
   m_PrefabInstance: {fileID: 447058882}
   m_PrefabAsset: {fileID: 0}
---- !u!4 &761615573 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: -764697234159880554, guid: 1c3f81f1f49bc744893c2d83d5979efb, type: 3}
-  m_PrefabInstance: {fileID: 447058882}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1336631172
 GameObject:
   m_ObjectHideFlags: 0
@@ -720,11 +715,6 @@ MonoBehaviour:
   offset: {x: 0, y: 3, z: -6}
   followSpeed: 15
   rotateSpeed: 15
---- !u!4 &1509674684 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: -7529372644190115253, guid: 1c3f81f1f49bc744893c2d83d5979efb, type: 3}
-  m_PrefabInstance: {fileID: 447058882}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &1515384108 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 1c3f81f1f49bc744893c2d83d5979efb, type: 3}
@@ -759,14 +749,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 82e0b00e10caf3f4abb43b201cc41fff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::KartController
+  acceleration: 10
   moveSpeed: 10
   maxSpeed: 15
-  steerAngle: 120
-  tractionNormal: 6
-  tractionDrift: 1.5
-  frontLeftWheel: {fileID: 1509674684}
-  frontRightWheel: {fileID: 761615573}
-  wheelSteerAngle: 30
+  driftSideForce: 8
+  driftCorrection: 0.5
+  driftCorrectionForce: 4
+  driftLockForce: 3
+  nitroSpeeds:
+  - 18
+  - 22
+  - 28
+  nitroLevel: 0
+  driftChargeRate: 0.1
+  nitroDrainRate: 0.7
 --- !u!4 &2112533169
 Transform:
   m_ObjectHideFlags: 0

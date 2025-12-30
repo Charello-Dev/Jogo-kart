@@ -1,128 +1,149 @@
 ﻿using UnityEngine;
 
-public class KartController: MonoBehaviour
+public class KartController : MonoBehaviour
 {
     [Header("Movimento")]
-    public float moveSpeed = 10f;      // aceleração
-    public float maxSpeed = 15f;       // velocidade máxima
-    public float steerAngle = 120f;    // quanto gira por segundo
+    public float acceleration = 10f;
+    public float moveSpeed; 
+    public float maxSpeed = 15f;
 
-    [Header("Tração")]
-    public float tractionNormal = 6f;   // aderência normal (alto = gruda na pista)
-    public float tractionDrift = 1.5f;  // aderência em drift (baixo = escorrega)
+    [Header("Drift")]
+    private int driftDirection = 0;  // -1 esquerda, 1 direita, 0 nenhum
+    public float driftSideForce = 8f;      
+    public float driftCorrection = 0.5f;
+    public float driftCorrectionForce = 4f; 
 
-    [Header("Rodas da frente (visuais)")]
-    public Transform frontLeftWheel;
-    public Transform frontRightWheel;
-    public float wheelSteerAngle = 30f; // quanto a roda pode girar para os lados
+    private Vector3 driftVelocity = Vector3.zero; 
 
-    Vector3 moveForce;   // vetor de movimento / velocidade atual
+    public float driftLockForce = 3f; 
 
-    bool drifting;       // está em modo drift?
-    int driftSide = 0;   // -1 = esquerda, 1 = direita, 0 = nenhum
+    private bool isDrifting = false;
 
-    void Update()
+    [Header("Nitro")]
+    public float[] nitroSpeeds = { 18f, 22f, 28f }; // 3 níveis de nitro
+    public int nitroLevel = 0;                     // 0 - 2
+    private float nitroCharge = 0f;                 // 0 - 100%
+    public float driftChargeRate = 0.1f;              
+    public float nitroDrainRate = 0.7f;            
+    private bool nitroActive = false;              
+
+    // inputs
+    private float accelerationInput;
+    private float steeringInput;
+
+    void Update() 
     {
-        // entrada de drift
-        bool driftKey = Input.GetKey(KeyCode.Space);
+        #region move
+        // pega inputs
+        accelerationInput = Input.GetAxis("Vertical");
+        steeringInput = Input.GetAxis("Horizontal");
+        
+        // atualiza velocidade
+        moveSpeed += accelerationInput * acceleration * Time.deltaTime;
+        
+        // freio e desaceleração natural
+        if (accelerationInput < 0) moveSpeed *= 0.95f; // freia mais rápido
+        else if (accelerationInput == 0) moveSpeed *= 0.98f; // desacelera devagar
 
-        if (driftKey && !drifting)
-        {
-            drifting = true;
 
-            float hEnter = Input.GetAxis("Horizontal");
+        moveSpeed = Mathf.Clamp(moveSpeed, 0, maxSpeed);
+        #endregion
 
-            if (Mathf.Abs(hEnter) > 0.1f)
-                driftSide = hEnter > 0 ? 1 : -1;
-            else
-                driftSide = 1; // padrão: direita
+        #region nitro management
+        
+        // input drift
+        bool wantsToDrift = Input.GetKey(KeyCode.Space);
+        
+        // inicia drift
+        if (wantsToDrift && Mathf.Abs(steeringInput) > 0.5f && driftDirection == 0) {
+            driftDirection = (int)Mathf.Sign(steeringInput); // TRVA a direção!
+            isDrifting = true;
+        }
+        
+        // sai do drift
+        if (!wantsToDrift) {
+            driftDirection = 0;
+            isDrifting = false;
+        }
+        
+        // inicia fricção reduzida durante o drift
+        if (isDrifting) moveSpeed *= 0.98f;
+
+        // carrega nitro com drift
+        if (isDrifting && driftDirection != 0) {
+            nitroCharge += driftChargeRate * Time.deltaTime;
+            nitroCharge = Mathf.Clamp(nitroCharge, 0, 100); // 0 - 100%
+        }
+        #endregion
+
+        #region nitro system
+        if (isDrifting) {
+            // carrega nitro durante o drift
+            nitroCharge += driftChargeRate * Time.deltaTime;
+            nitroCharge = Mathf.Clamp01(nitroCharge);
+
+            // atualiza nível de nitro
+            if (nitroCharge >= 0.66f) nitroLevel = 3;
+            else if (nitroCharge >= 0.33f) nitroLevel = 2;
+            else nitroLevel = 1;
         }
 
-        if (!driftKey && drifting)
-        {
-            drifting = false;
-            driftSide = 0;
-            // aqui depois dá pra aplicar nitro
+        // ativa nitro
+        if (!Input.GetKey(KeyCode.Space) && nitroCharge > 0.1f && !nitroActive) {
+            nitroActive = true;
         }
 
-        // aceleração e freio
-        float v = Input.GetAxis("Vertical");   // W/S ou setas
-
-        bool hasThrottle = Mathf.Abs(v) > 0.01f;
-
-        if (hasThrottle)
-        {
-            // só gera velocidade se estiver acelerando
-            moveForce += transform.forward * v * moveSpeed * Time.deltaTime;
-        }
-        else
-        {
-            // freio natural quando não está acelerando
-            moveForce = Vector3.Lerp(
-                moveForce,
-                Vector3.zero,
-                2f * Time.deltaTime
-            );
-        }
-
-        moveForce = Vector3.ClampMagnitude(moveForce, maxSpeed);
-
-        // steering (virar)
-        float h = Input.GetAxis("Horizontal");
-        bool hasSteer = Mathf.Abs(h) > 0.01f;
-
-        float speedFactor = moveForce.magnitude / maxSpeed; // 0–1
-
-        // só gira se: está com velocidade, tem input horizontal e está acelerando
-        if (speedFactor > 0.01f && hasSteer && hasThrottle)
-        {
-            float steerInput;
-            float steerMult = 1f;
-
-            if (drifting && driftSide != 0)
-            {
-                steerInput = driftSide;
-
-                float sideAmount = Mathf.Clamp01(driftSide * h);
-                steerMult = 0.5f + sideAmount;
+        // gasta nitro quando ativo
+        if (nitroActive) {
+            nitroCharge -= nitroDrainRate * Time.deltaTime;
+            if (nitroCharge <= 0f) {
+                nitroLevel = 0;
+                nitroActive = false;
+                nitroCharge = 0f;
             }
-            else
-            {
-                steerInput = h;
-            }
+        }
+        #endregion
+    }
 
-            float steer = steerInput * steerAngle * steerMult * speedFactor * Time.deltaTime;
-            transform.Rotate(0f, steer, 0f);
+    void FixedUpdate() {
+
+        //velocidade final (com nitro)
+        float finalSpeed = moveSpeed;
+        if (nitroActive && nitroLevel > 0) {
+            finalSpeed = nitroSpeeds[nitroLevel - 1]; // nível 1 - 3
         }
 
-        // giro das rodas (é mais de bonito msm)
-        float wheelAngle = hasThrottle ? h * wheelSteerAngle : 0f;
+        // movimento normal (frente)
+        transform.Translate(Vector3.forward * finalSpeed * Time.deltaTime);
 
-        if (frontLeftWheel != null)
-        {
-            Vector3 e = frontLeftWheel.localEulerAngles;
-            e.y = wheelAngle;
-            frontLeftWheel.localEulerAngles = e;
+        #region drift mechanics
+        if (moveSpeed > 1f && isDrifting && driftDirection != 0) {
+            
+            // aplica força lateral do drift
+            Vector3 driftForce = transform.right * (driftDirection * driftSideForce);
+            driftVelocity += driftForce * Time.deltaTime;
+            
+            // correção com input oposto
+            Vector3 correctionForce = transform.right * (steeringInput * driftCorrectionForce * 0.5f);
+            driftVelocity += correctionForce * Time.deltaTime;
+            
+            // velocidade lateral do drift
+            transform.Translate(driftVelocity * Time.deltaTime, Space.World);
+            
+            // fricção do drift
+            driftVelocity *= 0.95f;
+            
+            // rotação durante o drift
+            float steerAmount = (driftDirection * driftLockForce) + (steeringInput * driftCorrection);
+            transform.Rotate(Vector3.up, steerAmount * Time.deltaTime * 50f);
+            
+        } else {
+            // normal (sem drift)
+            driftVelocity *= 0.9f; // limpa driftVelocity rápido
+            
+            float steerAmount = steeringInput * (moveSpeed / maxSpeed) * 2f;
+            transform.Rotate(Vector3.up, steerAmount * Time.deltaTime * 50f);
         }
-
-        if (frontRightWheel != null)
-        {
-            Vector3 e = frontRightWheel.localEulerAngles;
-            e.y = wheelAngle;
-            frontRightWheel.localEulerAngles = e;
-        }
-
-        // tração
-        float currentTraction = drifting ? tractionDrift : tractionNormal;
-
-        Vector3 desired = transform.forward * moveForce.magnitude;
-        moveForce = Vector3.Lerp(
-            moveForce,
-            desired,
-            currentTraction * Time.deltaTime
-        );
-
-        // aplicar movimento
-        transform.position += moveForce * Time.deltaTime;
+        #endregion
     }
 }
