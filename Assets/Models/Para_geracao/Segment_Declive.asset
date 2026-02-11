@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 24ea63066fcf965498f5064a87991ecc, type: 3}
+  m_Name: Segment_Declive
+  m_EditorClassIdentifier: Assembly-CSharp::TrackSegmentSO
+  type: 8
+  prefab: {fileID: 8152712813866096052, guid: 8a23fe761de90d44183a3060ddad1651, type: 3}
+  weight: 25
