@@ -7,6 +7,7 @@ public class KartControll : MonoBehaviour
 
     [Header("general references")]
     private Rigidbody rb;
+    [SerializeField] private float gravityForce;
 
     [Header("Inputs")]
     private float inputMove;
@@ -34,9 +35,18 @@ public class KartControll : MonoBehaviour
     [SerializeField] private float maxSteeringAngle;
 
     [Space(10)]
-    
+
     [SerializeField] private Transform frontLeftWheel;
     [SerializeField] private Transform frontRightWheel;
+
+    [Header("Tilt")]
+    [SerializeField] private float tiltSpeed;
+    [SerializeField] private float groundCheckRaius;
+    [SerializeField] private Transform GroundCheck01;
+    [SerializeField] private Transform GroundCheck02;
+    [SerializeField] private LayerMask groundLayer;
+    private RaycastHit goundHitPoint;
+    private bool isGrounded;
 
     private void Awake() {
         rb = GetComponent<Rigidbody>();
@@ -53,11 +63,19 @@ public class KartControll : MonoBehaviour
     void Update() {
         Inputs();
         TurnWheels();
+        TiltRamp();
         TurnKart();
     }
 
     private void FixedUpdate() {
+        ApplyGravity();
         MoveKart();
+    }
+
+    private void ApplyGravity() {
+        if (!isGrounded) {
+            rb.AddForce(-Vector3.up * gravityForce);
+        }
     }
 
     private void Inputs() {
@@ -82,6 +100,28 @@ public class KartControll : MonoBehaviour
         
         // roda da direita
         frontRightWheel.localRotation = Quaternion.Euler(frontRightWheel.localRotation.eulerAngles.x, newSteeringAngle, frontRightWheel.localRotation.eulerAngles.z);
+    }
+
+    private void TiltRamp() {
+        Vector3 normalGround = Vector3.zero;
+
+        if (Physics.Raycast(GroundCheck01.position, -transform.up, out goundHitPoint, groundCheckRaius, groundLayer)) {
+            isGrounded = true;
+            normalGround = goundHitPoint.normal;
+        }
+        else {
+            isGrounded = false;
+            normalGround = Vector3.zero;
+        }
+
+        if (Physics.Raycast(GroundCheck02.position, -transform.up, out goundHitPoint, groundCheckRaius, groundLayer)) {
+            isGrounded = true;
+            normalGround = (normalGround + goundHitPoint.normal) / 2f;
+        }
+
+        if (isGrounded) {
+            transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.FromToRotation(transform.up, normalGround) * transform.rotation, tiltSpeed * Time.deltaTime);
+        }
     }
 
     private void MoveKart() {
