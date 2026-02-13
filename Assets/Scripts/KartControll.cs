@@ -50,7 +50,7 @@ public class KartControll : MonoBehaviour
     [SerializeField] private Transform GroundCheck02;   // raycast traseiro, para verificar o chão
     [SerializeField] private LayerMask groundLayer;     // layer do chão
     private RaycastHit goundHitPoint;                   // ponto do chão q tá pegando o raycast
-    private bool isGrounded;                            // booleana pra verificar se está no chão
+    [SerializeField]private bool isGrounded;                            // booleana pra verificar se está no chão
 
     private void Awake() {
         rb = GetComponent<Rigidbody>();
@@ -70,11 +70,11 @@ public class KartControll : MonoBehaviour
         Inputs();
         TurnWheels();
         TiltRamp();
-        TurnKart();
     }
 
     private void FixedUpdate() {
         ApplyGravity();
+        TurnKart();
         MoveKart();
     }
 
@@ -119,16 +119,16 @@ public class KartControll : MonoBehaviour
             isGrounded = true;
             normalGround = goundHitPoint.normal;
         }
-        else {
-            isGrounded = false;
-            normalGround = Vector3.zero;
-        }
+        
 
         if (Physics.Raycast(GroundCheck02.position, -transform.up, out goundHitPoint, groundCheckRaius, groundLayer)) {
             isGrounded = true;
             normalGround = (normalGround + goundHitPoint.normal) / 2f;
         }
-
+        else {
+            isGrounded = false;
+            normalGround = Vector3.zero;
+        }
         if (isGrounded) {
             transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.FromToRotation(transform.up, normalGround) * transform.rotation, tiltSpeed * Time.deltaTime);
         }
@@ -154,9 +154,11 @@ public class KartControll : MonoBehaviour
         if (isGrounded) {
             WheelsEffects_Activated();
         }
+
         else {
             WheelsEffects_Deactivated();
         }
+
     }
 
     // desativa o modo freio/drift

@@ -9416,6 +9416,7 @@ GameObject:
   - component: {fileID: 1367785383}
   - component: {fileID: 1367785382}
   - component: {fileID: 1367785385}
+  - component: {fileID: 1367785386}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -9541,6 +9542,22 @@ MonoBehaviour:
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
   m_Version: 2
+--- !u!114 &1367785386
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1367785381}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f2ad73beabc0d1546afc7ef9ace99465, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::KartCamera
+  speedFollow: 8
+  speedRotate: 10
+  offset: {x: 0, y: 3, z: -6}
+  target: {fileID: 1433822861}
 --- !u!1 &1369735518
 GameObject:
   m_ObjectHideFlags: 0
@@ -10062,7 +10079,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a132b976fb5a66e4394fdd03fd89f191, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::KartControll
-  gravityForce: 12.5
+  gravityForce: 45
   forwardSpeedNormal: 100
   forwardSpeedBrake: 75
   reverseSpeedNormal: 70
@@ -10076,12 +10093,13 @@ MonoBehaviour:
   wheelEffectLeft: {fileID: 102577223}
   wheelEffectRight: {fileID: 996159604}
   tiltSpeed: 30
-  groundCheckRaius: 0.5
+  groundCheckRaius: 1
   GroundCheck01: {fileID: 1920016409}
   GroundCheck02: {fileID: 1630081580}
   groundLayer:
     serializedVersion: 2
     m_Bits: 256
+  isGrounded: 1
 --- !u!54 &1433822863
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -11238,7 +11256,7 @@ Transform:
   m_GameObject: {fileID: 1630081579}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -0.50000006}
+  m_LocalPosition: {x: 0, y: 0.2, z: -0.679}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -13059,7 +13077,7 @@ Transform:
   m_GameObject: {fileID: 1920016408}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0.25000003}
+  m_LocalPosition: {x: -0, y: 0.2, z: 0.672}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

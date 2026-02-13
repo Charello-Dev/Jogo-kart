@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7040519066970104784}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: 'EndPoint '
   m_TagString: EndPointTag
   m_Icon: {fileID: 0}
@@ -40,7 +40,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7250576513426521007}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: 'StartPoint '
   m_TagString: StartPointTag
   m_Icon: {fileID: 0}
@@ -113,6 +113,14 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: e4de442f7b5c77246aab63dccfcedff5, type: 3}
       propertyPath: m_Name
       value: Curve_Left_Medium
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: e4de442f7b5c77246aab63dccfcedff5, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 6003969891461891444, guid: e4de442f7b5c77246aab63dccfcedff5, type: 3}
+      propertyPath: m_Layer
+      value: 8
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects:
