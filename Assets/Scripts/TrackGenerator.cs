@@ -217,5 +217,22 @@ public class TrackGenerator : MonoBehaviour
         return lengths;
     }
 
+    // faz a limpeza da pista atual, atrubuindo uma malha vazia ao MeshFilter.
+    // também apaga os dados dos pontos de controle e da spline, 
+    // para garantir que a próxima geração comece do zero.
+    public void ClearTrack() {
+        // cria uma malha vazia e substitui a atual
+        GetComponent<MeshFilter>().mesh = new Mesh();
+
+        // limpa os dados dos pontos
+        controlPoints.Clear();
+        splinePoints.Clear();
+    }
+
+    // atalho para limpar e gerar uma nova pista
+    public void RegenerateTrack() {
+        ClearTrack();
+        GenerateTrack();
+    }
 
 }

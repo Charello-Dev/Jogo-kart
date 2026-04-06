@@ -25,12 +25,23 @@ public class TrackGeneratorEditor : Editor
         EditorGUILayout.Space(4);
 
         // botão: Seed Aleatória
-        if (GUILayout.Button("Seed Aleatória + Gerar", GUILayout.Height(40))) {
+        if (GUILayout.Button("Nova Seed Aleatória + Gerar", GUILayout.Height(40))) {
+            // limpa a pista atual antes de gerar uma nova
+            generator.ClearTrack();
+            
             // sorteia uma seed nova entre 0 e 99999
             generator.seed = Random.Range(0, 99999);
 
+            // gera a pista com a nova seed
             generator.GenerateTrack();
 
+            EditorSceneManager.MarkSceneDirty(SceneManager.GetActiveScene());
+        }
+
+        // limpa a pista atual
+        EditorGUILayout.Space(4);
+        if (GUILayout.Button("Limpar Pista", GUILayout.Height(32))) {
+            generator.ClearTrack();
             EditorSceneManager.MarkSceneDirty(SceneManager.GetActiveScene());
         }
 
