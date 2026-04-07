@@ -61,6 +61,7 @@ public class TrackGenerator : MonoBehaviour
 
     // passo 1 - Gerar os pontos de controle
     void GenerateControlPoints() {
+        controlPoints.Clear();
         Random.InitState(seed);
 
         for (int i = 0; i < numControlPoints; i++) {
@@ -162,7 +163,7 @@ public class TrackGenerator : MonoBehaviour
         }
 
         // cálculo dos triângulos
-        for (int i = 0; i < n - 1; i++) {
+        for (int i = 0; i < n; i++) {
             int nextI = (i + 1) % n;    // índice do próximo ponto
             int baseIdx = i * 6;        // posição inicial deste no array de triângulos
 
@@ -173,13 +174,13 @@ public class TrackGenerator : MonoBehaviour
         
             // triângulo 1 (parte inferior esquerda)
             triangles[baseIdx] = iE;
-            triangles[baseIdx + 1] = iD;
-            triangles[baseIdx + 2] = nE;
+            triangles[baseIdx + 1] = nE;
+            triangles[baseIdx + 2] = iD;
 
             // triângulo 2 (parte superior direita)
             triangles[baseIdx + 3] = nE;
-            triangles[baseIdx + 4] = iD;
-            triangles[baseIdx + 5] = nD;
+            triangles[baseIdx + 4] = nD;
+            triangles[baseIdx + 5] = iD;
         }
 
         // criar e aplicar a malha na unity
