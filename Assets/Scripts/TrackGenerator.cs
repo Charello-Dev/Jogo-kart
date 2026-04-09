@@ -31,14 +31,6 @@ public class TrackGenerator : MonoBehaviour
     [Tooltip("Largura da pista")]
     public float trackWidth = 12f;
 
-    [Header("Elevação")]
-    [Tooltip("Altura máxima da pista")]
-    public float maxHeight = 15f;
-
-    [Tooltip("Escala das pistas. Menor = mais longo e suave, Maior = variação mais frequente")]
-    [Range(0.1f, 3f)]
-    public float noiseScale = 0.5f;
-
     // pontos que definem a forma geral da pista
     private List<Vector3> controlPoints = new List<Vector3>();
 
@@ -83,12 +75,10 @@ public class TrackGenerator : MonoBehaviour
             // conversão de polar para cartesiano
             float x = Mathf.Cos(angle) * radius;
             float z = Mathf.Sin(angle) * radius;
-            
-            // para o eixo Y
-            float perlinValue = Mathf.PerlinNoise(seed * 0.01f + i * noiseScale, seed * 0.01f);
-            float y = (perlinValue * 2f - 1f) * maxHeight;
+            // por enquanto y = 0. 
+            // depois vou adicionar subidas e descidas
 
-            controlPoints.Add(new Vector3(x, y, z));
+            controlPoints.Add(new Vector3(x, 0f, z));
         }
     }
 
@@ -149,58 +139,21 @@ public class TrackGenerator : MonoBehaviour
 
         float[] cumulativeLengths = CalculateCumulativeLengths();
         float totalLength = cumulativeLengths[n - 1]; // cumprimento total da pista
-        Vector3[] rights = new Vector3[n];
-
-        Vector3 initialForward = (splinePoints[1] - splinePoints[n - 1]).normalized;
-
-        rights[0] = Vector3.Cross(Vector3.up, initialForward).normalized;
-
 
         // cálculo das vértices e uvs
-        for (int i = 1; i < n; i++) {
+        for (int i = 0; i < n; i++) {
             // direção do ponto
             // tem como referencia os vizinhos (anterior e próximo) para calcular a direção
             int prev = (i - 1 + n) % n;
             int next = (i + 1) % n;
             Vector3 forward = (splinePoints[next] - splinePoints[prev]).normalized;
 
-            rights[i] = rights[i - 1] - Vector3.Dot(rights[i - 1], forward) * forward;
-            rights[i] = rights[i].normalized;
+            // direção "para direita" (para ir fechando a curva) - até pq é uma curva né
+            Vector3 right = Vector3.Cross(Vector3.up, forward).normalized;
 
-            if (Vector3.Dot(rights[i], rights[i - 1]) < 0)
-                rights[i] = -rights[i];
-        }
-
-        Vector3 fwd0 = (splinePoints[1] - splinePoints[n - 1]).normalized;
-        Vector3 seam = (rights[0] + rights[n - 1]).normalized;
-        seam = (seam - Vector3.Dot(seam, fwd0) * fwd0).normalized;
-        rights[0]     = seam;
-        rights[n - 1] = seam;
-
-        // suavização
-        for (int i = 0; i < 5; i++) {
-            Vector3[] smoothed = new Vector3[n];
-            for (int j = 0; j < n; j++)
-            {
-                int prev = (j - 1 + n) % n;
-                int next = (j + 1) % n;
-                Vector3 fwd = (splinePoints[next] - splinePoints[prev]).normalized;
-
-                // média ponderada: vizinhos valem 1x, ponto atual vale 2x
-                // dar mais peso ao atual preserva a forma geral da orientação
-                Vector3 avg = rights[prev] + rights[j] * 2f + rights[next];
-
-                avg = avg - Vector3.Dot(avg, fwd) * fwd;
-
-                smoothed[j] = avg.normalized;
-            }
-            rights = smoothed;
-        }
-
-        for (int i = 0; i < n; i++) {       
             // posições dos dois vértices
-            vertices[i * 2] = splinePoints[i] - rights[i] * (trackWidth * 0.5f);        // borda esquerda
-            vertices[i * 2 + 1] = splinePoints[i] + rights[i] * (trackWidth * 0.5f);    // borda direita
+            vertices[i * 2] = splinePoints[i] - right * (trackWidth * 0.5f);        // borda esquerda
+            vertices[i * 2 + 1] = splinePoints[i] + right * (trackWidth * 0.5f);    // borda direita
 
             // coordenada uv
             float v = cumulativeLengths[i] / totalLength;
