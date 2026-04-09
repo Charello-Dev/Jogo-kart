@@ -31,6 +31,14 @@ public class TrackGenerator : MonoBehaviour
     [Tooltip("Largura da pista")]
     public float trackWidth = 12f;
 
+    [Header("Elevação")]
+    [Tooltip("Altura máxima da pista (em metros)")]
+    public float maxHeight = 15f;
+
+    [Tooltip("Escala de ruído do Perlin (frequência das subidas e descidas)")]
+    [Range(0.1f, 3f)]
+    public float noiseScale = 0.5f;
+
     // pontos que definem a forma geral da pista
     private List<Vector3> controlPoints = new List<Vector3>();
 
@@ -75,10 +83,12 @@ public class TrackGenerator : MonoBehaviour
             // conversão de polar para cartesiano
             float x = Mathf.Cos(angle) * radius;
             float z = Mathf.Sin(angle) * radius;
-            // por enquanto y = 0. 
-            // depois vou adicionar subidas e descidas
+            
+            // variação de altura usando Perlin Noise
+            float perlinValue = Mathf.PerlinNoise(seed * 0.01f + i * noiseScale, seed * 0.01f);
+            float y = (perlinValue * 2f - 1f) * maxHeight;
 
-            controlPoints.Add(new Vector3(x, 0f, z));
+            controlPoints.Add(new Vector3(x, y, z));
         }
     }
 
