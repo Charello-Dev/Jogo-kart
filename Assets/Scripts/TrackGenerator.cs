@@ -14,7 +14,7 @@ public class TrackGenerator : MonoBehaviour
 
     [Header("Forma da Pista")]
     [Tooltip("Quantos pontos de controle definem o formato")]
-    [Range(4, 16)]
+    [Range(4, 13)]
     public int numControlPoints = 8;
 
     [Tooltip("Raio geral da pista")]
@@ -38,6 +38,11 @@ public class TrackGenerator : MonoBehaviour
     [Tooltip("Escala de ruído do Perlin (frequência das subidas e descidas)")]
     [Range(0.1f, 3f)]
     public float noiseScale = 0.5f;
+
+    [Header("Largada")]
+    [Tooltip("Quantos pontos de controle formam a reta de largada (sem curvas)")]
+    [Range(1, 4)]
+    public int startStraightPoints  = 2;
 
     // pontos que definem a forma geral da pista
     private List<Vector3> controlPoints = new List<Vector3>();
@@ -84,9 +89,25 @@ public class TrackGenerator : MonoBehaviour
             float x = Mathf.Cos(angle) * radius;
             float z = Mathf.Sin(angle) * radius;
             
-            // variação de altura usando Perlin Noise
-            float perlinValue = Mathf.PerlinNoise(seed * 0.01f + i * noiseScale, seed * 0.01f);
-            float y = (perlinValue * 2f - 1f) * maxHeight;
+            bool isStartStraight = (i < startStraightPoints) || 
+                               (i >= numControlPoints - startStraightPoints);
+            
+            float y;
+
+            if (isStartStraight) {
+                // reta de largada sem variação de altura
+                y = 0f;
+
+                radius = trackRadius;
+                x = Mathf.Cos(angle) * radius;
+                z = Mathf.Sin(angle) * radius;
+
+            } 
+            else {
+                // variação de altura usando Perlin Noise
+                float perlinValue = Mathf.PerlinNoise(seed * 0.01f + i * noiseScale, seed * 0.01f);
+                y = (perlinValue * 2f - 1f) * maxHeight;
+            }
 
             controlPoints.Add(new Vector3(x, y, z));
         }
