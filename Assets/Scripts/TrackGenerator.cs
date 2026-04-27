@@ -48,12 +48,12 @@ public class TrackGenerator : MonoBehaviour
     private List<Vector3> controlPoints = new List<Vector3>();
 
     // pontos que formam a curva suavizada (spline Catmull-Rom)
-    private List<Vector3> splinePoints = new List<Vector3>();
+    public List<Vector3> splinePoints = new List<Vector3>();
 
     void Start()
     {
         // gera a pista automaticamente quando o jogo começa
-        GenerateTrack();
+        //GenerateTrack();
     }
 
     public void GenerateTrack()
@@ -66,6 +66,9 @@ public class TrackGenerator : MonoBehaviour
 
         // passo 3: cria a geometria 3D da pista
         GenerateMesh();
+
+        // aqui ele chama o método SpawnCheckpoints do CheckpointSpawner para criar os checkpoints na pista gerada
+        FindObjectOfType<CheckpointSpawner>().SpawnCheckpoints();
 
         Debug.Log($"[TrackGenerator] Pista gerada! Seed: {seed} | " +
                   $"Pontos de controle: {controlPoints.Count} | " +

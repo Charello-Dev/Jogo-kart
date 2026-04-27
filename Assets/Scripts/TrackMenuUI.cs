@@ -10,6 +10,7 @@ public class TrackMenuUI : MonoBehaviour
 
     [Header("Textos")]
     public TextMeshProUGUI seedTxt;
+    public TextMeshProUGUI pcTxt;
 
     [Header("Botões")]
     public Button gerarNovaBtn;
@@ -22,8 +23,20 @@ public class TrackMenuUI : MonoBehaviour
 
     void Start()
     {
+        // gerar psita ocm uma seed nova
         gerarNovaBtn.onClick.AddListener(GerarNova);
+
+        // pista baseada em pista q o player deu a seed
         gerarSeedBtn.onClick.AddListener(GerarPorSeed);
+
+        // slider q define os pontos de controle
+        pontosSlider.value = 13;
+        pcTxt.text = pontosSlider.value.ToString();
+        pontosSlider.onValueChanged.AddListener(PontosDeControle);
+        
+        // toggle de relevo
+        trackGenerator.maxHeight = 12;
+        relevoToggle.onValueChanged.AddListener(Relevo);
     }
 
     void GerarNova() {
@@ -33,14 +46,33 @@ public class TrackMenuUI : MonoBehaviour
         // sorteia uma seed nova entre 0 e 99999
         int seed = Random.Range(0, 99999);
         trackGenerator.seed = seed;
-        seedTxt.text = $"Seed: {seed.ToString()}";
+        seedTxt.text = $"Seed: {seed}";
 
         // gera a pista com a nova seed
         trackGenerator.GenerateTrack();
     }
 
     void GerarPorSeed() {
-        
+        if (int.TryParse(seedInput.text, out int seed)) {
+            trackGenerator.seed = seed;
+            seedTxt.text = $"Seed: {seed}";
+            trackGenerator.GenerateTrack();
+        }
+    }
+
+    void PontosDeControle(float valor) {
+        int pc = (int)valor;
+        trackGenerator.numControlPoints = pc;
+        pcTxt.text = $"{pc}";
+    }
+
+    void Relevo(bool ativo) {
+        if (ativo) {
+            trackGenerator.maxHeight = 12;
+        }
+        else {
+            trackGenerator.maxHeight = 0;
+        }
     }
 
 }

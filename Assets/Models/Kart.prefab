@@ -90,7 +90,7 @@ Transform:
   m_GameObject: {fileID: 2356877013921737290}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.5, y: 0.3, z: -0.88}
+  m_LocalPosition: {x: 0.5, y: 0.15, z: -0.88}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -184,7 +184,7 @@ TrailRenderer:
       ctime6: 0
       ctime7: 0
       atime0: 0
-      atime1: 65535
+      atime1: 19661
       atime2: 0
       atime3: 0
       atime4: 0
@@ -192,7 +192,7 @@ TrailRenderer:
       atime6: 0
       atime7: 0
       m_Mode: 0
-      m_ColorSpace: -1
+      m_ColorSpace: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
     numCornerVertices: 0
@@ -264,7 +264,7 @@ Transform:
   m_GameObject: {fileID: 5178970900268992884}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.5, y: 0.3, z: -0.89}
+  m_LocalPosition: {x: -0.5, y: 0.15, z: -0.89}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -358,7 +358,7 @@ TrailRenderer:
       ctime6: 0
       ctime7: 0
       atime0: 0
-      atime1: 65535
+      atime1: 19661
       atime2: 0
       atime3: 0
       atime4: 0
@@ -423,9 +423,10 @@ GameObject:
   - component: {fileID: 6209048568090962453}
   - component: {fileID: 5386587453135528002}
   - component: {fileID: 5680479195965911926}
+  - component: {fileID: 24551908256630585}
   m_Layer: 0
   m_Name: Kart
-  m_TagString: Untagged
+  m_TagString: Kart
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -510,12 +511,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::KartControll
   gravityForce: 45
   forwardSpeedNormal: 100
-  forwardSpeedBrake: 75
+  forwardSpeedBrake: 85
   reverseSpeedNormal: 70
   reverseSpeedBrake: 55
   turnSpeed: 75
   dragNormal: 4
-  dragBrake: 7
+  dragBrake: 4
   maxSteeringAngle: 45
   frontLeftWheel: {fileID: 1907929157327454516}
   frontRightWheel: {fileID: 8690583781376073193}
@@ -529,6 +530,20 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 256
   isGrounded: 1
+--- !u!114 &24551908256630585
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6431718965212815105}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e50fe039557a0664b88995b4765854fd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::KartRespawn
+  checkpointSpawner: {fileID: 0}
+  fallLimit: -3
 --- !u!1 &6538890863328812314
 GameObject:
   m_ObjectHideFlags: 0
