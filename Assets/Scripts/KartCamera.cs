@@ -9,7 +9,9 @@ public class KartCamera : MonoBehaviour
     private Vector3 targetPosition;
 
     private void FixedUpdate() {
-        FollowTarget();
+        if (target != null) {
+            FollowTarget();
+        }
     }
 
     private void FollowTarget() {
@@ -23,4 +25,7 @@ public class KartCamera : MonoBehaviour
         transform.rotation = Quaternion.Lerp(transform.rotation, newRotation, speedRotate * Time.deltaTime);
     }
 
+    public void SetTarget(Transform newTarget) {
+        target = newTarget;
+    }
 }

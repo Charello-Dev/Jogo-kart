@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using DG.Tweening;
+using UnityEngine.SceneManagement;
 
 public class TrackMenuUI : MonoBehaviour
 {
@@ -15,12 +16,16 @@ public class TrackMenuUI : MonoBehaviour
     [Header("Botões")]
     public Button gerarNovaBtn;
     public Button gerarSeedBtn;
+    public Button playBtn;
 
     [Header("Controles")]
     public Slider pontosSlider;
     public Toggle relevoToggle;
     public TMP_InputField seedInput;
 
+    public GameObject kartPrefab;
+    public GameObject menuPanel;
+    
     void Start()
     {
         // gerar psita ocm uma seed nova
@@ -37,6 +42,16 @@ public class TrackMenuUI : MonoBehaviour
         // toggle de relevo
         trackGenerator.maxHeight = 12;
         relevoToggle.onValueChanged.AddListener(Relevo);
+
+        // botão de play
+        playBtn.onClick.AddListener(StartGame);
+    }
+
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape)) {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        }
     }
 
     void GerarNova() {
@@ -74,5 +89,15 @@ public class TrackMenuUI : MonoBehaviour
             trackGenerator.maxHeight = 0;
         }
     }
+
+    void StartGame() {
+        menuPanel.SetActive(false);
+
+        GameObject kart = Instantiate(kartPrefab, trackGenerator.splinePoints[0], Quaternion.identity);
+        kart.GetComponent<KartRespawn>().checkpointSpawner = FindObjectOfType<CheckpointSpawner>();
+        FindObjectOfType<KartCamera>().SetTarget(kart.transform);
+    }
+
+
 
 }

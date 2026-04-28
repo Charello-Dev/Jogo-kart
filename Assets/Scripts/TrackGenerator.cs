@@ -234,6 +234,7 @@ public class TrackGenerator : MonoBehaviour
 
         // aplica a malha no MeshFilter
         GetComponent<MeshFilter>().mesh = mesh;
+        GetComponent<MeshCollider>().sharedMesh = mesh;
     }
 
     // comprimento acumulado - vai servir para a textura avançar uniformemente

@@ -509,9 +509,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a132b976fb5a66e4394fdd03fd89f191, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::KartControll
-  gravityForce: 45
+  gravityForce: 200
   forwardSpeedNormal: 100
-  forwardSpeedBrake: 85
+  forwardSpeedBrake: 80
   reverseSpeedNormal: 70
   reverseSpeedBrake: 55
   turnSpeed: 75
@@ -543,7 +543,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::KartRespawn
   checkpointSpawner: {fileID: 0}
-  fallLimit: -3
+  fallLimit: -10
 --- !u!1 &6538890863328812314
 GameObject:
   m_ObjectHideFlags: 0
